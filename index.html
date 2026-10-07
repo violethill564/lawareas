@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Legal English – Interactive Lesson</title>
+<style>
+  :root {
+    --primary: #2c3e6b;
+    --accent: #4a6fa5;
+    --light: #e8edf5;
+    --success: #27ae60;
+    --error: #e74c3c;
+    --warning: #f39c12;
+    --bg: #f4f6fa;
+    --card: #ffffff;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: var(--bg);
+    color: #222;
+    line-height: 1.6;
+    padding: 20px;
+  }
+  .container { max-width: 960px; margin: 0 auto; }
+  h1 {
+    text-align: center;
+    color: var(--primary);
+    margin-bottom: 10px;
+    font-size: 2em;
+  }
+  h2 {
+    color: var(--primary);
+    border-bottom: 3px solid var(--accent);
+    padding-bottom: 8px;
+    margin: 30px 0 15px;
+  }
+  h3 {
+    color: var(--accent);
+    margin: 15px 0 10px;
+  }
+  .subtitle {
+    text-align: center;
+    color: #666;
+    margin-bottom: 30px;
+    font-style: italic;
+  }
+  .card {
+    background: var(--card);
+    border-radius: 10px;
+    padding: 25px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+  .word-bank {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    background: var(--light);
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+  }
+  .word-bank span {
+    background: var(--accent);
+    color: white;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.9em;
+  }
+  .question {
+    margin-bottom: 15px;
+    padding: 12px;
+    border-left: 4px solid var(--accent);
+    background: #fafbfd;
+    border-radius: 0 8px 8px 0;
+  }
+  .question label {
+    font-weight: bold;
+    color: var(--primary);
+    margin-right: 8px;
+  }
+  select, input[type="text"] {
+    padding: 6px 10px;
+    border: 2px solid #ccc;
+    border-radius: 6px;
+    font-size: 1em;
+    min-width: 200px;
+    transition: border-color 0.3s;
+  }
+  select:focus, input[type="text"]:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+  .btn {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 8px;
+    font-size: 1em;
+    cursor: pointer;
+    margin: 10px 5px;
+    transition: background 0.3s;
+  }
+  .btn:hover { background: var(--accent); }
+  .btn-reset { background: var(--warning); }
+  .btn-reset:hover { background: #e67e22; }
+  .feedback {
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 6px;
+    font-weight: bold;
+    display: none;
+  }
+  .feedback.show { display: block; }
+  .feedback.correct { background: #d4edda; color: var(--success); border: 1px solid var(--success); }
+  .feedback.incorrect { background: #fde8e8; color: var(--error); border: 1px solid var(--error); }
+  .score-bar {
+    background: var(--light);
+    border-radius: 20px;
+    height: 30px;
+    overflow: hidden;
+    margin: 10px 0;
+  }
+  .score-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--success), #2ecc71);
+    transition: width 0.5s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 0.9em;
+  }
+  /* Scenario task styles */
+  .scenario {
+    background: #fff8e1;
+    border: 2px solid var(--warning);
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 12px;
+  }
+  .scenario p { margin-bottom: 10px; font-style: italic; }
+  .scenario-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+  }
+  .scenario-row label { font-weight: bold; color: var(--primary); }
+  .document-card {
+    background: #e8f5e9;
+    border: 2px solid var(--success);
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 12px;
+  }
+  .document-card.invalid {
+    background: #ffebee;
+    border-color: var(--error);
+  }
+  .category-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+  }
+  .category-table th {
+    background: var(--primary);
+    color: white;
+    padding: 12px;
+    text-align: center;
+  }
+  .category-table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    vertical-align: top;
+    min-height: 60px;
+  }
+  .category-table td select {
+    width: 100%;
+    margin-bottom: 5px;
+  }
+  .progress-nav {
+    position: sticky;
+    top: 0;
+    background: var(--primary);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 100;
+  }
+  .progress-nav span { font-weight: bold; }
+  .nav-btn {
+    background: rgba(255,255,255,0.2);
+    color: white;
+    border: 1px solid white;
+    padding: 6px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9em;
+  }
+  .nav-btn:hover { background: rgba(255,255,255,0.3); }
+  .section { display: none; }
+  .section.active { display: block; }
+  .tab-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-bottom: 20px;
+  }
+  .tab {
+    padding: 8px 16px;
+    background: var(--light);
+    border: 2px solid var(--accent);
+    border-radius: 6px 6px 0 0;
+    cursor: pointer;
+    font-weight: bold;
+    color: var(--primary);
+    transition: all 0.3s;
+  }
+  .tab.active {
+    background: var(--accent);
+    color: white;
+  }
+  .tab:hover { background: var(--accent); color: white; }
+  .hint {
+    font-size: 0.85em;
+    color: #888;
+    margin-top: 5px;
+    font-style: italic;
+  }
+  .answer-reveal {
+    background: #fff3cd;
+    border: 1px solid var(--warning);
+    padding: 10px;
+    border-radius: 6px;
+    margin-top: 8px;
+    display: none;
+    font-size: 0.95em;
+  }
+  .answer-reveal.show { display: block; }
+  @media (max-width: 600px) {
+    select, input[type="text"] { min-width: 150px; }
+    .scenario-row { flex-direction: column; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>️ Legal English – Interactive Lesson</h1>
+<p class="subtitle">Master legal vocabulary through interactive exercises</p>
+
+<div class="progress-nav">
+  <button class="nav-btn" onclick="showSection(0)"> Start</button>
+  <span id="progressLabel">Task 1 of 8</span>
+  <button class="nav-btn" onclick="nextSection()">Next ▶</button>
+</div>
+
+<!-- ==================== SECTION 1: Scenario Task ==================== -->
+<div class="section active" id="section0">
+  <div class="card">
+    <h2>📋 Task 1: Client Consultation – Grounds for a Claim</h2>
+    <p style="margin-bottom:15px;">People come to you with all sorts of problems. Decide whether they have the grounds to draft a claim and what area of law their claim falls into.</p>
+
+    <div class="scenario">
+      <p><strong>Client A:</strong> "My neighbour's tree fell on my car during a storm. He knew it was diseased but did nothing. I want compensation for the damage."</p>
+      <div class="scenario-row">
+        <label>Grounds for claim?</label>
+        <select id="s1a_grounds">
+          <option value="">-- Select --</option>
+          <option value="yes">Yes – there are grounds</option>
+          <option value="no">No – no valid grounds</option>
+        </select>
+        <label>Area of law:</label>
+        <select id="s1a_area">
+          <option value="">-- Select --</option>
+          <option value="contract">Law of Contract</option>
+          <option value="company">Company Law</option>
+          <option value="land">Land Law</option>
+          <option value="tort">Law of Tort</option>
+          <option value="equity">Law of Equity and Trusts</option>
+          <option value="employment">Employment Law</option>
+          <option value="family">Family Law</option>
+          <option value="immigration">Immigration Law</option>
+          <option value="ip">Intellectual Property Law</option>
+          <option value="criminal">Criminal Law</option>
+        </select>
+      </div>
+      <div class="answer-reveal" id="s1a_ans">✅ <strong>Yes</strong> – grounds exist (negligence: duty of care breached). Area: <strong>Law of Tort</strong>.</div>
+    </div>
+
+    <div class="scenario">
+      <p><strong>Client B:</strong> "I signed a contract to buy a house, but the seller changed their mind and won't complete the sale. I've already paid a deposit."</p>
+      <div class="scenario-row">
+        <label>Grounds for claim?</label>
+        <select id="s1b_grounds">
+          <option value="">-- Select --</option>
+          <option value="yes">Yes – there are grounds</option>
+          <option value="no">No – no valid grounds</option>
+        </select>
+        <label>Area of law:</label>
+        <select id="s1b_area">
+          <option value="">-- Select --</option>
+          <option value="contract">Law of Contract</option>
+          <option value="company">Company Law</option>
+          <option value="land">Land Law</option>
+          <option value="tort">Law of Tort</option>
+          <option value="equity">Law of Equity and Trusts</option>
+          <option value="employment">Employment Law</option>
+          <option value="family">Family Law</option>
+          <option value="immigration">Immigration Law</option>
+          <option value="ip">Intellectual Property Law</option>
+          <option value="criminal">Criminal Law</option>
+        </select>
+      </div>
+      <div class="answer-reveal" id="s1b_ans">✅ <strong>Yes</strong> – breach of contract. Area: <strong>Law of Contract</strong> (and potentially <strong>Land Law</strong> for conveyancing aspects).</div>
+    </div>
+
+    <div class="scenario">
+      <p><strong>Client C:</strong> "My employer fired me because I'm pregnant. I've only been working there for two months."</p>
+      <div class="scenario-row">
+        <label>Grounds for claim?</label>
+        <select id="s1c_grounds">
+          <option value="">-- Select --</option>
+          <option value="yes">Yes – there are grounds</option>
+          <option value="no">No – no valid grounds</option>
+        </select>
+        <label>Area of law:</label>
+        <select id="s1c_area">
+          <option value="">-- Select --</option>
+          <option value="contract">Law of Contract</option>
+          <option value="company">Company Law</option>
+          <option value="land">Land Law</option>
+          <option value="tort">Law of Tort</option>
+          <option value="equity">Law of Equity and Trusts</option>
+          <option value="employment">Employment Law</option>
+          <option value="family">Family Law</option>
+          <option value="immigration">Immigration Law</option>
+          <option value="ip">Intellectual Property Law</option>
+          <option value="criminal">Criminal Law</option>
+        </select>
+      </div>
+      <div class="answer-reveal" id="s1c_ans">✅ <strong>Yes</strong> – pregnancy discrimination is unlawful regardless of length of service. Area: <strong>Employment Law</strong>.</div>
+    </div>
+
+    <div class="scenario">
+      <p><strong>Client D:</strong> "My business partner is refusing to share the profits even though we have a verbal agreement to split them 50/50."</p>
+      <div class="scenario-row">
+        <label>Grounds for claim?</label>
+        <select id="s1d_grounds">
+          <option value="">-- Select --</option>
+          <option value="yes">Yes – there are grounds</option>
+          <option value="no">No – no valid grounds</option>
+        </select>
+        <label>Area of law:</label>
+        <select id="s1d_area">
+          <option value="">-- Select --</option>
+          <option value="contract">Law of Contract</option>
+          <option value="company">Company Law</option>
+          <option value="land">Land Law</option>
+          <option value="tort">Law of Tort</option>
+          <option value="equity">Law of Equity and Trusts</option>
+          <option value="employment">Employment Law</option>
+          <option value="family">Family Law</option>
+          <option value="immigration">Immigration Law</option>
+          <option value="ip">Intellectual Property Law</option>
+          <option value="criminal">Criminal Law</option>
+        </select>
+      </div>
+      <div class="answer-reveal" id="s1d_ans">✅ <strong>Yes</strong> – partnership dispute. Area: <strong>Company Law</strong> (partnership law) and/or <strong>Law of Contract</strong>.</div>
+    </div>
+
+    <div class="scenario">
+      <p><strong>Client E:</strong> "Someone copied my novel and published it under their own name. I want them to stop and pay me damages."</p>
+      <div class="scenario-row">
+        <label>Grounds for claim?</label>
+        <select id="s1e_grounds">
+          <option value="">-- Select --</option>
+          <option value="yes">Yes – there are grounds</option>
+          <option value="no">No – no valid grounds</option>
+        </select>
+        <label>Area of law:</label>
+        <select id="s1e_area">
+          <option value="">-- Select --</option>
+          <option value="contract">Law of Contract</option>
+          <option value="company">Company Law</option>
+          <option value="land">Land Law</option>
+          <option value="tort">Law of Tort</option>
+          <option value="equity">Law of Equity and Trusts</option>
+          <option value="employment">Employment Law</option>
+          <option value="family">Family Law</option>
+          <option value="immigration">Immigration Law</option>
+          <option value="ip">Intellectual Property Law</option>
+          <option value="criminal">Criminal Law</option>
+        </select>
+      </div>
+      <div class="answer-reveal" id="s1e_ans">✅ <strong>Yes</strong> – copyright infringement. Area: <strong>Intellectual Property Law</strong>.</div>
+    </div>
+
+    <div class="scenario">
+      <p><strong>Client F:</strong> "I'm going through a divorce and we can't agree on who gets custody of the children."</p>
+      <div class="scenario-row">
+        <label>Grounds for claim?</label>
+        <select id="s1f_grounds">
+          <option value="">-- Select --</option>
+          <option value="yes">Yes – there are grounds</option>
+          <option value="no">No – no valid grounds</option>
+        </select>
+        <label>Area of law:</label>
+        <select id="s1f_area">
+          <option value="">-- Select --</option>
+          <option value="contract">Law of Contract</option>
+          <option value="company">Company Law</option>
+          <option value="land">Land Law</option>
+          <option value="tort">Law of Tort</option>
+          <option value="equity">Law of Equity and Trusts</option>
+          <option value="employment">Employment Law</option>
+          <option value="family">Family Law</option>
+          <option value="immigration">Immigration Law</option>
+          <option value="ip">Intellectual Property Law</option>
+          <option value="criminal">Criminal Law</option>
+        </select>
+      </div>
+      <div class="answer-reveal" id="s1f_ans">✅ <strong>Yes</strong> – child custody dispute. Area: <strong>Family Law</strong>.</div>
+    </div>
+
+    <div class="scenario">
+      <p><strong>Client G:</strong> "I was arrested for shoplifting but I'm innocent. The police didn't read me my rights."</p>
+      <div class="scenario-row">
+        <label>Grounds for claim?</label>
+        <select id="s1g_grounds">
+          <option value="">-- Select --</option>
+          <option value="yes">Yes – there are grounds</option>
+          <option value="no">No – no valid grounds</option>
+        </select>
+        <label>Area of law:</label>
+        <select id="s1g_area">
+          <option value="">-- Select --</option>
+          <option value="contract">Law of Contract</option>
+          <option value="company">Company Law</option>
+          <option value="land">Land Law</option>
+          <option value="tort">Law of Tort</option>
+          <option value="equity">Law of Equity and Trusts</option>
+          <option value="employment">Employment Law</option>
+          <option value="family">Family Law</option>
+          <option value="immigration">Immigration Law</option>
+          <option value="ip">Intellectual Property Law</option>
+          <option value="criminal">Criminal Law</option>
+        </select>
+      </div>
+      <div class="answer-reveal" id="s1g_ans">✅ <strong>Yes</strong> – defence against criminal charges / potential civil claim. Area: <strong>Criminal Law</strong> (and possibly <strong>Law of Tort</strong> for false imprisonment).</div>
+    </div>
+
+    <div class="scenario">
+      <p><strong>Client H:</strong> "My grandfather left money in a will to be held for my benefit until I turn 25, but my aunt is refusing to hand it over."</p>
+      <div class="scenario-row">
+        <label>Grounds for claim?</label>
+        <select id="s1h_grounds">
+          <option value="">-- Select --</option>
+          <option value="yes">Yes – there are grounds</option>
+          <option value="no">No – no valid grounds</option>
+        </select>
+        <label>Area of law:</label>
+        <select id="s1h_area">
+          <option value="">-- Select --</option>
+          <option value="contract">Law of Contract</option>
+          <option value="company">Company Law</option>
+          <option value="land">Land Law</option>
+          <option value="tort">Law of Tort</option>
+          <option value="equity">Law of Equity and Trusts</option>
+          <option value="employment">Employment Law</option>
+          <option value="family">Family Law</option>
+          <option value="immigration">Immigration Law</option>
+          <option value="ip">Intellectual Property Law</option>
+          <option value="criminal">Criminal Law</option>
+        </select>
+      </div>
+      <div class="answer-reveal" id="s1h_ans">✅ <strong>Yes</strong> – breach of trust. Area: <strong>Law of Equity and Trusts</strong>.</div>
+    </div>
+
+    <button class="btn" onclick="checkScenarios()">Check Answers</button>
+    <button class="btn btn-reset" onclick="resetScenarios()">Reset</button>
+    <div class="feedback" id="scenarioFeedback"></div>
+  </div>
+</div>
+
+<!-- ==================== SECTION 2: Exercise 4 ==================== -->
+<div class="section" id="section1">
+  <div class="card">
+    <h2>📝 Exercise 4 – Legal Vocabulary</h2>
+    <p style="margin-bottom:15px;">Choose a word or phrase from the box to complete the sentences.</p>
+
+    <div class="word-bank">
+      <span>drafting</span><span>criminal law</span><span>goods</span><span>the law of tort</span>
+      <span>the law of equity and trusts</span><span>valid</span><span>intellectual property law</span>
+      <span>family law</span><span>based in</span><span>merged</span>
+    </div>
+
+    <div class="question">
+      <label>a)</label> A lawyer who deals with clients who are in trouble with the police is a specialist in
+      <select id="ex4a"><option value="">--</option><option>drafting</option><option>criminal law</option><option>goods</option><option>the law of tort</option><option>the law of equity and trusts</option><option>valid</option><option>intellectual property law</option><option>family law</option><option>based in</option><option>merged</option></select>.
+      <div class="answer-reveal" id="ex4a_ans">✅ criminal law</div>
+    </div>
+
+    <div class="question">
+      <label>b)</label> Last year my bank
+      <select id="ex4b"><option value="">--</option><option>drafting</option><option>criminal law</option><option>goods</option><option>the law of tort</option><option>the law of equity and trusts</option><option>valid</option><option>intellectual property law</option><option>family law</option><option>based in</option><option>merged</option></select>
+      with a big German bank and they are now called EuropBank. I think they are the biggest bank in Europe now!
+      <div class="answer-reveal" id="ex4b_ans">✅ merged</div>
+    </div>
+
+    <div class="question">
+      <label>c)</label> A lawyer who deals with clients who create new inventions such as medicines or machines, or new artistic works such as books or music, is a specialist in
+      <select id="ex4c"><option value="">--</option><option>drafting</option><option>criminal law</option><option>goods</option><option>the law of tort</option><option>the law of equity and trusts</option><option>valid</option><option>intellectual property law</option><option>family law</option><option>based in</option><option>merged</option></select>.
+      <div class="answer-reveal" id="ex4c_ans">✅ intellectual property law</div>
+    </div>
+
+    <div class="question">
+      <label>d)</label> I spent three hours this morning
+      <select id="ex4d"><option value="">--</option><option>drafting</option><option>criminal law</option><option>goods</option><option>the law of tort</option><option>the law of equity and trusts</option><option>valid</option><option>intellectual property law</option><option>family law</option><option>based in</option><option>merged</option></select>
+      a contract for my new client. I think the contract is ready for him to read and sign now.
+      <div class="answer-reveal" id="ex4d_ans">✅ drafting</div>
+    </div>
+
+    <div class="question">
+      <label>e)</label> I want to put some of my money into a fund for the benefit of my grandchildren, which they will have when they reach the age of 18. I need to see a lawyer who is a specialist in
+      <select id="ex4e"><option value="">--</option><option>drafting</option><option>criminal law</option><option>goods</option><option>the law of tort</option><option>the law of equity and trusts</option><option>valid</option><option>intellectual property law</option><option>family law</option><option>based in</option><option>merged</option></select>.
+      <div class="answer-reveal" id="ex4e_ans">✅ the law of equity and trusts</div>
+    </div>
+
+    <div class="question">
+      <label>f)</label> Well, I am from London but I am
+      <select id="ex4f"><option value="">--</option><option>drafting</option><option>criminal law</option><option>goods</option><option>the law of tort</option><option>the law of equity and trusts</option><option>valid</option><option>intellectual property law</option><option>family law</option><option>based in</option><option>merged</option></select>
+      Amsterdam at the moment because I'm working for a Dutch company.
+      <div class="answer-reveal" id="ex4f_ans">✅ based in</div>
+    </div>
+
+    <div class="question">
+      <label>g)</label> A lawyer who deals with clients who are divorcing or who have problems over the care of their children is a specialist in
+      <select id="ex4g"><option value="">--</option><option>drafting</option><option>criminal law</option><option>goods</option><option>the law of tort</option><option>the law of equity and trusts</option><option>valid</option><option>intellectual property law</option><option>family law</option><option>based in</option><option>merged</option></select>.
+      <div class="answer-reveal" id="ex4g_ans">✅ family law</div>
+    </div>
+
+    <div class="question">
+      <label>h)</label> The company delivers
+      <select id="ex4h"><option value="">--</option><option>drafting</option><option>criminal law</option><option>goods</option><option>the law of tort</option><option>the law of equity and trusts</option><option>valid</option><option>intellectual property law</option><option>family law</option><option>based in</option><option>merged</option></select>
+      all over the United States by rail and by truck.
+      <div class="answer-reveal" id="ex4h_ans">✅ goods</div>
+    </div>
+
+    <div class="question">
+      <label>i)</label> A lawyer who deals with people who breach their civil duty of care is a specialist in
+      <select id="ex4i"><option value="">--</option><option>drafting</option><option>criminal law</option><option>goods</option><option>the law of tort</option><option>the law of equity and trusts</option><option>valid</option><option>intellectual property law</option><option>family law</option><option>based in</option><option>merged</option></select>.
+      <div class="answer-reveal" id="ex4i_ans">✅ the law of tort</div>
+    </div>
+
+    <div class="question">
+      <label>j)</label> That contract is not
+      <select id="ex4j"><option value="">--</option><option>drafting</option><option>criminal law</option><option>goods</option><option>the law of tort</option><option>the law of equity and trusts</option><option>valid</option><option>intellectual property law</option><option>family law</option><option>based in</option><option>merged</option></select>
+      because your client hasn't signed it.
+      <div class="answer-reveal" id="ex4j_ans">✅ valid</div>
+    </div>
+
+    <button class="btn" onclick="checkExercise4()">Check Answers</button>
+    <button class="btn btn-reset" onclick="resetExercise4()">Reset</button>
+    <button class="btn" style="background:#8e44ad" onclick="showAllAnswers('ex4')">Show All Answers</button>
+    <div class="feedback" id="ex4Feedback"></div>
+    <div class="score-bar"><div class="score-fill" id="ex4Score" style="width:0%">0%</div></div>
+  </div>
+</div>
+
+<!-- ==================== SECTION 3: Document Validity Task ==================== -->
+<div class="section" id="section2">
+  <div class="card">
+    <h2> Task 2: Valid Proof in a Case</h2>
+    <p style="margin-bottom:15px;">Decide whether these documents can be valid proof in a case. Some are valid and some are not.</p>
+
+    <div class="document-card">
+      <p><strong>Document 1:</strong> A signed written contract between two parties, dated and witnessed.</p>
+      <div class="scenario-row">
+        <label>Valid proof?</label>
+        <select id="doc1">
+          <option value="">-- Select --</option>
+          <option value="valid">Yes – valid proof</option>
+          <option value="invalid">No – not valid proof</option>
+        </select>
+        <label>Reason:</label>
+        <select id="doc1_reason">
+          <option value="">-- Select --</option>
+          <option value="signed">It is signed and witnessed</option>
+          <option value="hearsay">It is hearsay</option>
+          <option value="unsigned">It is not signed</option>
+          <option value="official">It is an official document</option>
+        </select>
+      </div>
+      <div class="answer-reveal" id="doc1_ans">✅ <strong>Valid proof</strong> – A signed, dated, and witnessed contract is strong documentary evidence.</div>
+    </div>
+
+    <div class="document-card">
+      <p><strong>Document 2:</strong> A text message from a friend saying "I heard the defendant was at the scene."</p>
+      <div class="scenario-row">
+        <label>Valid proof?</label>
+        <select id="doc2">
+          <option value="">-- Select --</option>
+          <option value="valid">Yes – valid proof</option>
+          <option value="invalid">No – not valid proof</option>
+        </select>
+        <label>Reason:</label>
+        <select id="doc2_reason">
+          <option value="">-- Select --</option>
+          <option value="hearsay">It is hearsay (second-hand information)</option>
+          <option value="direct">It is direct evidence</option>
+          <option value="official">It is an official record</option>
+        </select>
+      </div>
+      <div class="answer-reveal" id="doc2_ans">❌ <strong>Not valid proof</strong> – This is hearsay (second-hand information). The friend did not witness the event directly.</div>
+    </div>
+
+    <div class="document-card">
+      <p><strong>Document 3:</strong> An unsigned draft of a contract that was never finalised.</p>
+      <div class="scenario-row">
+        <label>Valid proof?</label>
+        <select id="doc3">
+          <option value="">-- Select --</option>
+          <option value="valid">Yes – valid proof</option>
+          <option value="invalid">No – not valid proof</option>
+        </select>
+        <label>Reason:</label>
+        <select id="doc3_reason">
+          <option value="">-- Select --</option>
+          <option value="unsigned">It is not signed / not finalised</option>
+          <option value="binding">It is legally binding</option>
+        </select>
+      </div>
+      <div class="answer-reveal" id="doc3_ans">❌ <strong>Not valid proof</strong> – An unsigned draft that was never finalised is not a valid contract and generally cannot serve as proof of agreement.</div>
+    </div>
+
+    <div class="document-card">
+      <p><strong>Document 4:</strong> A bank statement showing regular payments from the defendant to the claimant.</p>
+      <div class="scenario-row">
+        <label>Valid proof?</label>
+        <select id="doc4">
+          <option value="">-- Select --</option>
+          <option value="valid">Yes – valid proof</option>
+          <option value="invalid">No – not valid proof</option>
+        </select>
+        <label>Reason:</label>
+        <select id="doc4_reason">
+          <option value="">-- Select --</option>
+          <option value="official">It is an official financial record</option>
+          <option value="hearsay">It is hearsay</option>
+        </select>
+      </div>
+      <div class="answer-reveal" id="doc4_ans">✅ <strong>Valid proof</strong> – Bank statements are official financial records and are admissible as documentary evidence.</div>
+    </div>
+
+    <div class="document-card">
+      <p><strong>Document 5:</strong> A photograph taken at the scene of an accident, with metadata showing the date and time.</p>
+      <div class="scenario-row">
+        <label>Valid proof?</label>
+        <select id="doc5">
+          <option value="">-- Select --</option>
+          <option value="valid">Yes – valid proof</option>
+          <option value="invalid">No – not valid proof</option>
+        </select>
+        <label>Reason:</label>
+        <select id="doc5_reason">
+          <option value="">-- Select --</option>
+          <option value="direct">It is direct visual evidence with verifiable metadata</option>
+          <option value="hearsay">It is hearsay</option>
+        </select>
+      </div>
+      <div class="answer-reveal" id="doc5_ans">✅ <strong>Valid proof</strong> – Photographs with verifiable metadata are strong direct evidence.</div>
+    </div>
+
+    <div class="document-card">
+      <p><strong>Document 6:</strong> An email from a lawyer to their client discussing case strategy (marked "confidential").</p>
+      <div class="scenario-row">
+        <label>Valid proof?</label>
+        <select id="doc6">
+          <option value="">-- Select --</option>
+          <option value="valid">Yes – valid proof</option>
+          <option value="invalid">No – not valid proof</option>
+        </select>
+        <label>Reason:</label>
+        <select id="doc6_reason">
+          <option value="">-- Select --</option>
+          <option value="privileged">It is protected by legal professional privilege</option>
+          <option value="official">It is an official document</option>
+        </select>
+      </div>
+      <div class="answer-reveal" id="doc6_ans">❌ <strong>Not valid proof</strong> – Communications between a lawyer and client are protected by legal professional privilege and are generally inadmissible.</div>
+    </div>
+
+    <div class="document-card">
+      <p><strong>Document 7:</strong> A birth certificate issued by the government registry office.</p>
+      <div class="scenario-row">
+        <label>Valid proof?</label>
+        <select id="doc7">
+          <option value="">-- Select --</option>
+          <option value="valid">Yes – valid proof</option>
+          <option value="invalid">No – not valid proof</option>
+        </select>
+        <label>Reason:</label>
+        <select id="doc7_reason">
+          <option value="">-- Select --</option>
+          <option value="official">It is an official government document</option>
+          <option value="hearsay">It is hearsay</option>
+        </select>
+      </div>
+      <div class="answer-reveal" id="doc7_ans">✅ <strong>Valid proof</strong> – A birth certificate is an official government document and is admissible as proof of identity/age.</div>
+    </div>
+
+    <div class="document-card">
+      <p><strong>Document 8:</strong> A verbal agreement recalled by one party, with no written record or witnesses.</p>
+      <div class="scenario-row">
+        <label>Valid proof?</label>
+        <select id="doc8">
+          <option value="">-- Select --</option>
+          <option value="valid">Yes – valid proof</option>
+          <option value="invalid">No – not valid proof</option>
+        </select>
+        <label>Reason:</label>
+        <select id="doc8_reason">
+          <option value="">-- Select --</option>
+          <option value="noevidence">There is no documentary or witness evidence</option>
+          <option value="binding">It is legally binding</option>
+        </select>
+      </div>
+      <div class="answer-reveal" id="doc8_ans">❌ <strong>Not valid proof</strong> – A verbal agreement with no written record or witnesses is extremely difficult to prove in court.</div>
+    </div>
+
+    <button class="btn" onclick="checkDocuments()">Check Answers</button>
+    <button class="btn btn-reset" onclick="resetDocuments()">Reset</button>
+    <button class="btn" style="background:#8e44ad" onclick="showAllDocAnswers()">Show All Answers</button>
+    <div class="feedback" id="docFeedback"></div>
+  </div>
+</div>
+
+<!-- ==================== SECTION 4: Exercise 5 ==================== -->
+<div class="section" id="section3">
+  <div class="card">
+    <h2> Exercise 5 – Business, Employment & Land Law Vocabulary</h2>
+    <p style="margin-bottom:15px;">Choose a word or phrase from the box to complete the sentences.</p>
+
+    <div class="word-bank">
+      <span>unfair dismissal</span><span>landlord</span><span>capital</span><span>redundancy</span>
+      <span>lease of land and buildings</span><span>maternity leave</span><span>sick pay</span>
+      <span>partnership</span><span>formation of a business</span><span>discriminate</span>
+      <span>insolvent</span><span>merger</span><span>tenant</span><span>conveyancing</span>
+      <span>real estate</span>
+    </div>
+
+    <div class="question"><label>a)</label> To be <select id="ex5a"><option value="">--</option><option>unfair dismissal</option><option>landlord</option><option>capital</option><option>redundancy</option><option>lease of land and buildings</option><option>maternity leave</option><option>sick pay</option><option>partnership</option><option>formation of a business</option><option>discriminate</option><option>insolvent</option><option>merger</option><option>tenant</option><option>conveyancing</option><option>real estate</option></select> means not having enough money to pay your debts. <div class="answer-reveal" id="ex5a_ans">✅ insolvent</div></div>
+
+    <div class="question"><label>b)</label> A <select id="ex5b"><option value="">--</option><option>unfair dismissal</option><option>landlord</option><option>capital</option><option>redundancy</option><option>lease of land and buildings</option><option>maternity leave</option><option>sick pay</option><option>partnership</option><option>formation of a business</option><option>discriminate</option><option>insolvent</option><option>merger</option><option>tenant</option><option>conveyancing</option><option>real estate</option></select> is the joining together of two or more things, such as companies, to form one single thing or company. <div class="answer-reveal" id="ex5b_ans">✅ merger</div></div>
+
+    <div class="question"><label>c)</label> A <select id="ex5c"><option value="">--</option><option>unfair dismissal</option><option>landlord</option><option>capital</option><option>redundancy</option><option>lease of land and buildings</option><option>maternity leave</option><option>sick pay</option><option>partnership</option><option>formation of a business</option><option>discriminate</option><option>insolvent</option><option>merger</option><option>tenant</option><option>conveyancing</option><option>real estate</option></select> is a person who pays rent to the owner of a house, a flat or an office in return for living there, or for using the building for business purposes. <div class="answer-reveal" id="ex5c_ans">✅ tenant</div></div>
+
+    <div class="question"><label>d)</label> <select id="ex5d"><option value="">--</option><option>Unfair dismissal</option><option>Landlord</option><option>Capital</option><option>Redundancy</option><option>Lease of land and buildings</option><option>Maternity leave</option><option>Sick pay</option><option>Partnership</option><option>Formation of a business</option><option>Discriminate</option><option>Insolvent</option><option>Merger</option><option>Tenant</option><option>Conveyancing</option><option>Real estate</option></select> is the legal process involved in transferring the ownership of a house or land from the seller to the buyer. <div class="answer-reveal" id="ex5d_ans">✅ Conveyancing</div></div>
+
+    <div class="question"><label>e)</label> To <select id="ex5e"><option value="">--</option><option>unfair dismissal</option><option>landlord</option><option>capital</option><option>redundancy</option><option>lease of land and buildings</option><option>maternity leave</option><option>sick pay</option><option>partnership</option><option>formation of a business</option><option>discriminate</option><option>insolvent</option><option>merger</option><option>tenant</option><option>conveyancing</option><option>real estate</option></select> against someone means to behave differently towards that person, usually in the workplace, because of their age, sex or the colour of their skin. <div class="answer-reveal" id="ex5e_ans">✅ discriminate</div></div>
+
+    <div class="question"><label>f)</label> <select id="ex5f"><option value="">--</option><option>Unfair dismissal</option><option>Landlord</option><option>Capital</option><option>Redundancy</option><option>Lease of land and buildings</option><option>Maternity leave</option><option>Sick pay</option><option>Partnership</option><option>Formation of a business</option><option>Discriminate</option><option>Insolvent</option><option>Merger</option><option>Tenant</option><option>Conveyancing</option><option>Real estate</option></select> is a situation where someone loses his or her job for a reason that is not valid. <div class="answer-reveal" id="ex5f_ans">✅ Unfair dismissal</div></div>
+
+    <div class="question"><label>g)</label> <select id="ex5g"><option value="">--</option><option>Unfair dismissal</option><option>Landlord</option><option>Capital</option><option>Redundancy</option><option>Lease of land and buildings</option><option>Maternity leave</option><option>Sick pay</option><option>Partnership</option><option>Formation of a business</option><option>Discriminate</option><option>Insolvent</option><option>Merger</option><option>Tenant</option><option>Conveyancing</option><option>Real estate</option></select> is money that an employer must pay to an employee when that employee is ill and cannot work. <div class="answer-reveal" id="ex5g_ans">✅ Sick pay</div></div>
+
+    <div class="question"><label>h)</label> A <select id="ex5h"><option value="">--</option><option>unfair dismissal</option><option>landlord</option><option>capital</option><option>redundancy</option><option>lease of land and buildings</option><option>maternity leave</option><option>sick pay</option><option>partnership</option><option>formation of a business</option><option>discriminate</option><option>insolvent</option><option>merger</option><option>tenant</option><option>conveyancing</option><option>real estate</option></select> is an agreement to allow someone to use land or buildings for a fixed period of time in return for a payment of rent. <div class="answer-reveal" id="ex5h_ans">✅ lease of land and buildings</div></div>
+
+    <div class="question"><label>i)</label> The <select id="ex5i"><option value="">--</option><option>unfair dismissal</option><option>landlord</option><option>capital</option><option>redundancy</option><option>lease of land and buildings</option><option>maternity leave</option><option>sick pay</option><option>partnership</option><option>formation of a business</option><option>discriminate</option><option>insolvent</option><option>merger</option><option>tenant</option><option>conveyancing</option><option>real estate</option></select> is the establishment of a new business in a specific way. <div class="answer-reveal" id="ex5i_ans">✅ formation of a business</div></div>
+
+    <div class="question"><label>j)</label> A <select id="ex5j"><option value="">--</option><option>unfair dismissal</option><option>landlord</option><option>capital</option><option>redundancy</option><option>lease of land and buildings</option><option>maternity leave</option><option>sick pay</option><option>partnership</option><option>formation of a business</option><option>discriminate</option><option>insolvent</option><option>merger</option><option>tenant</option><option>conveyancing</option><option>real estate</option></select> is a business which a minimum of two people own and control. <div class="answer-reveal" id="ex5j_ans">✅ partnership</div></div>
+
+    <div class="question"><label>k)</label> <select id="ex5k"><option value="">--</option><option>Unfair dismissal</option><option>Landlord</option><option>Capital</option><option>Redundancy</option><option>Lease of land and buildings</option><option>Maternity leave</option><option>Sick pay</option><option>Partnership</option><option>Formation of a business</option><option>Discriminate</option><option>Insolvent</option><option>Merger</option><option>Tenant</option><option>Conveyancing</option><option>Real estate</option></select> is the time period when a woman is not at work before and after the birth of her baby. Her employer usually pays her for part or all of the time that she is away. <div class="answer-reveal" id="ex5k_ans">✅ Maternity leave</div></div>
+
+    <div class="question"><label>l)</label> <select id="ex5l"><option value="">--</option><option>Unfair dismissal</option><option>Landlord</option><option>Capital</option><option>Redundancy</option><option>Lease of land and buildings</option><option>Maternity leave</option><option>Sick pay</option><option>Partnership</option><option>Formation of a business</option><option>Discriminate</option><option>Insolvent</option><option>Merger</option><option>Tenant</option><option>Conveyancing</option><option>Real estate</option></select> is the total amount of money, property and other assets that a business has. <div class="answer-reveal" id="ex5l_ans">✅ Capital</div></div>
+
+    <div class="question"><label>m)</label> <select id="ex5m"><option value="">--</option><option>Unfair dismissal</option><option>Landlord</option><option>Capital</option><option>Redundancy</option><option>Lease of land and buildings</option><option>Maternity leave</option><option>Sick pay</option><option>Partnership</option><option>Formation of a business</option><option>Discriminate</option><option>Insolvent</option><option>Merger</option><option>Tenant</option><option>Conveyancing</option><option>Real estate</option></select> is a situation where someone loses his or her job because an employer no longer needs so many employees. <div class="answer-reveal" id="ex5m_ans">✅ Redundancy</div></div>
+
+    <div class="question"><label>n)</label> A <select id="ex5n"><option value="">--</option><option>unfair dismissal</option><option>landlord</option><option>capital</option><option>redundancy</option><option>lease of land and buildings</option><option>maternity leave</option><option>sick pay</option><option>partnership</option><option>formation of a business</option><option>discriminate</option><option>insolvent</option><option>merger</option><option>tenant</option><option>conveyancing</option><option>real estate</option></select> is a person who owns a house, a flat or office and receives rent from someone for allowing them to live there, or use the building for business purposes. <div class="answer-reveal" id="ex5n_ans">✅ landlord</div></div>
+
+    <div class="question"><label>o)</label> <select id="ex5o"><option value="">--</option><option>Unfair dismissal</option><option>Landlord</option><option>Capital</option><option>Redundancy</option><option>Lease of land and buildings</option><option>Maternity leave</option><option>Sick pay</option><option>Partnership</option><option>Formation of a business</option><option>Discriminate</option><option>Insolvent</option><option>Merger</option><option>Tenant</option><option>Conveyancing</option><option>Real estate</option></select> is a more formal way of saying land and houses. <div class="answer-reveal" id="ex5o_ans">✅ Real estate</div></div>
+
+    <button class="btn" onclick="checkExercise5()">Check Answers</button>
+    <button class="btn btn-reset" onclick="resetExercise5()">Reset</button>
+    <button class="btn" style="background:#8e44ad" onclick="showAllAnswers('ex5')">Show All Answers</button>
+    <div class="feedback" id="ex5Feedback"></div>
+    <div class="score-bar"><div class="score-fill" id="ex5Score" style="width:0%">0%</div></div>
+  </div>
+</div>
+
+<!-- ==================== SECTION 5: Exercise 6 ==================== -->
+<div class="section" id="section4">
+  <div class="card">
+    <h2>📊 Exercise 6 – Categorise the Vocabulary</h2>
+    <p style="margin-bottom:15px;">All of the words and phrases in Exercise 5 belong to either employment law, business law or land law. Put each word or phrase under the correct area of law.</p>
+
+    <div class="word-bank">
+      <span>unfair dismissal</span><span>landlord</span><span>capital</span><span>redundancy</span>
+      <span>lease of land and buildings</span><span>maternity leave</span><span>sick pay</span>
+      <span>partnership</span><span>formation of a business</span><span>discriminate</span>
+      <span>insolvent</span><span>merger</span><span>tenant</span><span>conveyancing</span>
+      <span>real estate</span>
+    </div>
+
+    <table class="category-table">
+      <tr>
+        <th>Employment Law</th>
+        <th>Business Law</th>
+        <th>Land Law</th>
+      </tr>
+      <tr>
+        <td>
+          <select id="ex6_1"><option value="">-- Select --</option><option>unfair dismissal</option><option>landlord</option><option>capital</option><option>redundancy</option><option>lease of land and buildings</option><option>maternity leave</option><option>sick pay</option><option>partnership</option><option>formation of a business</option><option>discriminate</option><option>insolvent</option><option>merger</option><option>tenant</option><option>conveyancing</option><option>real estate</option></select><br>
+          <select id="ex6_2"><option value="">-- Select --</option><option>unfair dismissal</option><option>landlord</option><option>capital</option><option>redundancy</option><option>lease of land and buildings</option><option>maternity leave</option><option>sick pay</option><option>partnership</option><option>formation of a business</option><option>discriminate</option><option>insolvent</option><option>merger</option><option>tenant</option><option>conveyancing</option><option>real estate</option></select><br>
+          <select id="ex6_3"><option value="">-- Select --</option><option>unfair dismissal</option><option>landlord</option><option>capital</option><option>redundancy</option><option>lease of land and buildings</option><option>maternity leave</option><option>sick pay</option><option>partnership</option><option>formation of a business</option><option>discriminate</option><option>insolvent</option><option>merger</option><option>tenant</option><option>conveyancing</option><option>real estate</option></select><br>
+          <select id="ex6_4"><option value="">-- Select --</option><option>unfair dismissal</option><option>landlord</option><option>capital</option><option>redundancy</option><option>lease of land and buildings</option><option>maternity leave</option><option>sick pay</option><option>partnership</option><option>formation of a business</option><option>discriminate</option><option>insolvent</option><option>merger</option><option>tenant</option><option>conveyancing</option><option>real estate</option></select><br>
+          <select id="ex6_5"><option value="">-- Select --</option><option>unfair dismissal</option><option>landlord</option><option>capital</option><option>redundancy</option><option>lease of land and buildings</option><option>maternity leave</option><option>sick pay</option><option>partnership</option><option>formation of a business</option><option>discriminate</option><option>insolvent</option><option>merger</option><option>tenant</option><option>conveyancing</option><option>real estate</option></select>
+        </td>
+        <td>
+          <select id="ex6_6"><option value="">-- Select --</option><option>unfair dismissal</option><option>landlord</option><option>capital</option><option>redundancy</option><option>lease of land and buildings</option><option>maternity leave</option><option>sick pay</option><option>partnership</option><option>formation of a business</option><option>discriminate</option><option>insolvent</option><option>merger</option><option>tenant</option><option>conveyancing</option><option>real estate</option></select><br>
+          <select id="ex6_7"><option value="">-- Select --</option><option>unfair dismissal</option><option>landlord</option><option>capital</option><option>redundancy</option><option>lease of land and buildings</option><option>maternity leave</option><option>sick pay</option><option>partnership</option><option>formation of a business</option><option>discriminate</option><option>insolvent</option><option>merger</option><option>tenant</option><option>conveyancing</option><option>real estate</option></select><br>
+          <select id="ex6_8"><option value="">-- Select --</option><option>unfair dismissal</option><option>landlord</option><option>capital</option><option>redundancy</option><option>lease of land and buildings</option><option>maternity leave</option><option>sick pay</option><option>partnership</option><option>formation of a business</option><option>discriminate</option><option>insolvent</option><option>merger</option><option>tenant</option><option>conveyancing</option><option>real estate</option></select><br>
+          <select id="ex6_9"><option value="">-- Select --</option><option>unfair dismissal</option><option>landlord</option><option>capital</option><option>redundancy</option><option>lease of land and buildings</option><option>maternity leave</option><option>sick pay</option><option>partnership</option><option>formation of a business</option><option>discriminate</option><option>insolvent</option><option>merger</option><option>tenant</option><option>conveyancing</option><option>real estate</option></select><br>
+          <select id="ex6_10"><option value="">-- Select --</option><option>unfair dismissal</option><option>landlord</option><option>capital</option><option>redundancy</option><option>lease of land and buildings</option><option>maternity leave</option><option>sick pay</option><option>partnership</option><option>formation of a business</option><option>discriminate</option><option>insolvent</option><option>merger</option><option>tenant</option><option>conveyancing</option><option>real estate</option></select>
+        </td>
+        <td>
+          <select id="ex6_11"><option value="">-- Select --</option><option>unfair dismissal</option><option>landlord</option><option>capital</option><option>redundancy</option><option>lease of land and buildings</option><option>maternity leave</option><option>sick pay</option><option>partnership</option><option>formation of a business</option><option>discriminate</option><option>insolvent</option><option>merger</option><option>tenant</option><option>conveyancing</option><option>real estate</option></select><br>
+          <select id="ex6_12"><option value="">-- Select --</option><option>unfair dismissal</option><option>landlord</option><option>capital</option><option>redundancy</option><option>lease of land and buildings</option><option>maternity leave</option><option>sick pay</option><option>partnership</option><option>formation of a business</option><option>discriminate</option><option>insolvent</option><option>merger</option><option>tenant</option><option>conveyancing</option><option>real estate</option></select><br>
+          <select id="ex6_13"><option value="">-- Select --</option><option>unfair dismissal</option><option>landlord</option><option>capital</option><option>redundancy</option><option>lease of land and buildings</option><option>maternity leave</option><option>sick pay</option><option>partnership</option><option>formation of a business</option><option>discriminate</option><option>insolvent</option><option>merger</option><option>tenant</option><option>conveyancing</option><option>real estate</option></select><br>
+          <select id="ex6_14"><option value="">-- Select --</option><option>unfair dismissal</option><option>landlord</option><option>capital</option><option>redundancy</option><option>lease of land and buildings</option><option>maternity leave</option><option>sick pay</option><option>partnership</option><option>formation of a business</option><option>discriminate</option><option>insolvent</option><option>merger</option><option>tenant</option><option>conveyancing</option><option>real estate</option></select><br>
+          <select id="ex6_15"><option value="">-- Select --</option><option>unfair dismissal</option><option>landlord</option><option>capital</option><option>redundancy</option><option>lease of land and buildings</option><option>maternity leave</option><option>sick pay</option><option>partnership</option><option>formation of a business</option><option>discriminate</option><option>insolvent</option><option>merger</option><option>tenant</option><option>conveyancing</option><option>real estate</option></select>
+        </td>
+      </tr>
+    </table>
+
+    <div class="answer-reveal" id="ex6_ans" style="margin-top:15px;">
+      <strong>Employment Law:</strong> unfair dismissal, maternity leave, sick pay, discriminate, redundancy<br>
+      <strong>Business Law:</strong> capital, partnership, merger, formation of a business, insolvent<br>
+      <strong>Land Law:</strong> lease of land and buildings, landlord, tenant, conveyancing, real estate
+    </div>
+
+    <button class="btn" onclick="checkExercise6()">Check Answers</button>
+    <button class="btn btn-reset" onclick="resetExercise6()">Reset</button>
+    <button class="btn" style="background:#8e44ad" onclick="document.getElementById('ex6_ans').classList.toggle('show')">Show/Hide Answers</button>
+    <div class="feedback" id="ex6Feedback"></div>
+  </div>
+</div>
+
+<!-- ==================== SECTION 6: Exercise 7 ==================== -->
+<div class="section" id="section5">
+  <div class="card">
+    <h2>📝 Exercise 7 – Employment Law Sentences</h2>
+    <p style="margin-bottom:15px;">Complete the following sentences by using the words from the <strong>employment law</strong> section.</p>
+
+    <div class="word-bank">
+      <span>unfair dismissal</span><span>maternity leave</span><span>sick pay</span><span>discriminate</span><span>redundancy</span>
+    </div>
+
+    <div class="question"><label>a)</label> My baby will arrive at the end of March so I will take six months' <select id="ex7a"><option value="">--</option><option>unfair dismissal</option><option>maternity leave</option><option>sick pay</option><option>discriminate</option><option>redundancy</option></select> starting on 1 March. <div class="answer-reveal" id="ex7a_ans">✅ maternity leave</div></div>
+
+    <div class="question"><label>b)</label> He sued his employer on the grounds of <select id="ex7b"><option value="">--</option><option>unfair dismissal</option><option>maternity leave</option><option>sick pay</option><option>discriminate</option><option>redundancy</option></select> because the reason his employer gave for firing him was not valid. <div class="answer-reveal" id="ex7b_ans">✅ unfair dismissal</div></div>
+
+    <div class="question"><label>c)</label> If you are ill and not able to work you should look at your contract to see if you can get <select id="ex7c"><option value="">--</option><option>unfair dismissal</option><option>maternity leave</option><option>sick pay</option><option>discriminate</option><option>redundancy</option></select>. <div class="answer-reveal" id="ex7c_ans">✅ sick pay</div></div>
+
+    <div class="question"><label>d)</label> It is against the law in England for an employer to <select id="ex7d"><option value="">--</option><option>unfair dismissal</option><option>maternity leave</option><option>sick pay</option><option>discriminate</option><option>redundancy</option></select> against an employee because of his or her age. <div class="answer-reveal" id="ex7d_ans">✅ discriminate</div></div>
+
+    <div class="question"><label>e)</label> Many employees are worried about <select id="ex7e"><option value="">--</option><option>unfair dismissal</option><option>maternity leave</option><option>sick pay</option><option>discriminate</option><option>redundancy</option></select> because a lot of businesses are closing in this area at the moment. <div class="answer-reveal" id="ex7e_ans">✅ redundancy</div></div>
+
+    <button class="btn" onclick="checkExercise7()">Check Answers</button>
+    <button class="btn btn-reset" onclick="resetExercise7()">Reset</button>
+    <button class="btn" style="background:#8e44ad" onclick="showAllAnswers('ex7')">Show All Answers</button>
+    <div class="feedback" id="ex7Feedback"></div>
+    <div class="score-bar"><div class="score-fill" id="ex7Score" style="width:0%">0%</div></div>
+  </div>
+</div>
+
+<!-- ==================== SECTION 7: Exercise 8 ==================== -->
+<div class="section" id="section6">
+  <div class="card">
+    <h2>📝 Exercise 8 – Business Law Sentences</h2>
+    <p style="margin-bottom:15px;">Complete the following sentences by using the words from the <strong>business law</strong> section.</p>
+
+    <div class="word-bank">
+      <span>formation of a business</span><span>capital</span><span>insolvent</span><span>merger</span><span>partnership</span>
+    </div>
+
+    <div class="question"><label>a)</label> The <select id="ex8a"><option value="">--</option><option>formation of a business</option><option>capital</option><option>insolvent</option><option>merger</option><option>partnership</option></select> is the formal way of saying the way in which a new business is created. <div class="answer-reveal" id="ex8a_ans">✅ formation of a business</div></div>
+
+    <div class="question"><label>b)</label> The total <select id="ex8b"><option value="">--</option><option>formation of a business</option><option>capital</option><option>insolvent</option><option>merger</option><option>partnership</option></select> of the business is valued at approximately £32 million. <div class="answer-reveal" id="ex8b_ans">✅ capital</div></div>
+
+    <div class="question"><label>c)</label> The business does not have enough money to pay its debts and is <select id="ex8c"><option value="">--</option><option>formation of a business</option><option>capital</option><option>insolvent</option><option>merger</option><option>partnership</option></select>. <div class="answer-reveal" id="ex8c_ans">✅ insolvent</div></div>
+
+    <div class="question"><label>d)</label> There will be a <select id="ex8d"><option value="">--</option><option>formation of a business</option><option>capital</option><option>insolvent</option><option>merger</option><option>partnership</option></select> next year between two major British chemical companies. <div class="answer-reveal" id="ex8d_ans">✅ merger</div></div>
+
+    <div class="question"><label>e)</label> My friend and I want to start a cleaning business together and we decided that the best thing to do is to create a <select id="ex8e"><option value="">--</option><option>formation of a business</option><option>capital</option><option>insolvent</option><option>merger</option><option>partnership</option></select>. <div class="answer-reveal" id="ex8e_ans">✅ partnership</div></div>
+
+    <button class="btn" onclick="checkExercise8()">Check Answers</button>
+    <button class="btn btn-reset" onclick="resetExercise8()">Reset</button>
+    <button class="btn" style="background:#8e44ad" onclick="showAllAnswers('ex8')">Show All Answers</button>
+    <div class="feedback" id="ex8Feedback"></div>
+    <div class="score-bar"><div class="score-fill" id="ex8Score" style="width:0%">0%</div></div>
+  </div>
+</div>
+
+<!-- ==================== SECTION 8: Exercise 9 ==================== -->
+<div class="section" id="section7">
+  <div class="card">
+    <h2>📝 Exercise 9 – Land Law Sentences</h2>
+    <p style="margin-bottom:15px;">Complete the following sentences by using the words from the <strong>land law</strong> section.</p>
+
+    <div class="word-bank">
+      <span>tenant</span><span>conveyancing</span><span>lease of land and buildings</span><span>landlord</span><span>real estate</span>
+    </div>
+
+    <div class="question"><label>a)</label> He is a very good <select id="ex9a"><option value="">--</option><option>tenant</option><option>conveyancing</option><option>lease of land and buildings</option><option>landlord</option><option>real estate</option></select>. He always pays the rent on time! <div class="answer-reveal" id="ex9a_ans">✅ tenant</div></div>
+
+    <div class="question"><label>b)</label> My sister works in the Property department of her law firm. She acts for people who are buying and selling houses. She is a specialist in <select id="ex9b"><option value="">--</option><option>tenant</option><option>conveyancing</option><option>lease of land and buildings</option><option>landlord</option><option>real estate</option></select>. <div class="answer-reveal" id="ex9b_ans">✅ conveyancing</div></div>
+
+    <div class="question"><label>c)</label> We don't own our house; we rent it. The <select id="ex9c"><option value="">--</option><option>tenant</option><option>conveyancing</option><option>lease of land and buildings</option><option>landlord</option><option>real estate</option></select> ends in three months so we will have to find somewhere else to live. <div class="answer-reveal" id="ex9c_ans">✅ lease of land and buildings</div></div>
+
+    <div class="question"><label>d)</label> He is the <select id="ex9d"><option value="">--</option><option>tenant</option><option>conveyancing</option><option>lease of land and buildings</option><option>landlord</option><option>real estate</option></select> of five houses in this area. He makes a lot of money every month from the rent. <div class="answer-reveal" id="ex9d_ans">✅ landlord</div></div>
+
+    <div class="question"><label>e)</label> The price of <select id="ex9e"><option value="">--</option><option>tenant</option><option>conveyancing</option><option>lease of land and buildings</option><option>landlord</option><option>real estate</option></select> in this part of the country increased a lot last year. It is very expensive to buy a house. <div class="answer-reveal" id="ex9e_ans">✅ real estate</div></div>
+
+    <button class="btn" onclick="checkExercise9()">Check Answers</button>
+    <button class="btn btn-reset" onclick="resetExercise9()">Reset</button>
+    <button class="btn" style="background:#8e44ad" onclick="showAllAnswers('ex9')">Show All Answers</button>
+    <div class="feedback" id="ex9Feedback"></div>
+    <div class="score-bar"><div class="score-fill" id="ex9Score" style="width:0%">0%</div></div>
+  </div>
+</div>
+
+</div><!-- /container -->
+
+<script>
+const totalSections = 8;
+let currentSection = 0;
+
+function showSection(n) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById('section' + n).classList.add('active');
+  currentSection = n;
+  document.getElementById('progressLabel').textContent = 'Task ' + (n + 1) + ' of ' + totalSections;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function nextSection() {
+  if (currentSection < totalSections - 1) showSection(currentSection + 1);
+}
+
+// Exercise 4
+const ex4Answers = { ex4a: 'criminal law', ex4b: 'merged', ex4c: 'intellectual property law', ex4d: 'drafting', ex4e: 'the law of equity and trusts', ex4f: 'based in', ex4g: 'family law', ex4h: 'goods', ex4i: 'the law of tort', ex4j: 'valid' };
+
+function checkExercise4() {
+  let correct = 0, total = Object.keys(ex4Answers).length;
+  for (let id in ex4Answers) {
+    const sel = document.getElementById(id);
+    if (sel.value === ex4Answers[id]) { sel.style.borderColor = 'var(--success)'; correct++; }
+    else { sel.style.borderColor = 'var(--error)'; }
+  }
+  const pct = Math.round(correct / total * 100);
+  document.getElementById('ex4Score').style.width = pct + '%';
+  document.getElementById('ex4Score').textContent = pct + '%';
+  const fb = document.getElementById('ex4Feedback');
+  fb.className = 'feedback show ' + (pct === 100 ? 'correct' : 'incorrect');
+  fb.textContent = `You got ${correct} out of ${total} correct! (${pct}%)`;
+}
+
+function resetExercise4() {
+  for (let id in ex4Answers) { document.getElementById(id).value = ''; document.getElementById(id).style.borderColor = '#ccc'; }
+  document.getElementById('ex4Feedback').className = 'feedback';
+  document.getElementById('ex4Score').style.width = '0%';
+  document.getElementById('ex4Score').textContent = '0%';
+  document.querySelectorAll('[id^="ex4"][id$="_ans"]').forEach(el => el.classList.remove('show'));
+}
+
+// Exercise 5
+const ex5Answers = { ex5a: 'insolvent', ex5b: 'merger', ex5c: 'tenant', ex5d: 'Conveyancing', ex5e: 'discriminate', ex5f: 'Unfair dismissal', ex5g: 'Sick pay', ex5h: 'lease of land and buildings', ex5i: 'formation of a business', ex5j: 'partnership', ex5k: 'Maternity leave', ex5l: 'Capital', ex5m: 'Redundancy', ex5n: 'landlord', ex5o: 'Real estate' };
+
+function checkExercise5() {
+  let correct = 0, total = Object.keys(ex5Answers).length;
+  for (let id in ex5Answers) {
+    const sel = document.getElementById(id);
+    if (sel.value.toLowerCase() === ex5Answers[id].toLowerCase()) { sel.style.borderColor = 'var(--success)'; correct++; }
+    else { sel.style.borderColor = 'var(--error)'; }
+  }
+  const pct = Math.round(correct / total * 100);
+  document.getElementById('ex5Score').style.width = pct + '%';
+  document.getElementById('ex5Score').textContent = pct + '%';
+  const fb = document.getElementById('ex5Feedback');
+  fb.className = 'feedback show ' + (pct === 100 ? 'correct' : 'incorrect');
+  fb.textContent = `You got ${correct} out of ${total} correct! (${pct}%)`;
+}
+
+function resetExercise5() {
+  for (let id in ex5Answers) { document.getElementById(id).value = ''; document.getElementById(id).style.borderColor = '#ccc'; }
+  document.getElementById('ex5Feedback').className = 'feedback';
+  document.getElementById('ex5Score').style.width = '0%';
+  document.getElementById('ex5Score').textContent = '0%';
+  document.querySelectorAll('[id^="ex5"][id$="_ans"]').forEach(el => el.classList.remove('show'));
+}
+
+// Exercise 6
+const ex6Employment = ['unfair dismissal', 'maternity leave', 'sick pay', 'discriminate', 'redundancy'];
+const ex6Business = ['capital', 'partnership', 'merger', 'formation of a business', 'insolvent'];
+const ex6Land = ['lease of land and buildings', 'landlord', 'tenant', 'conveyancing', 'real estate'];
+
+function checkExercise6() {
+  let correct = 0;
+  for (let i = 1; i <= 5; i++) {
+    const v = document.getElementById('ex6_' + i).value;
+    if (ex6Employment.includes(v)) { document.getElementById('ex6_' + i).style.borderColor = 'var(--success)'; correct++; }
+    else { document.getElementById('ex6_' + i).style.borderColor = 'var(--error)'; }
+  }
+  for (let i = 6; i <= 10; i++) {
+    const v = document.getElementById('ex6_' + i).value;
+    if (ex6Business.includes(v)) { document.getElementById('ex6_' + i).style.borderColor = 'var(--success)'; correct++; }
+    else { document.getElementById('ex6_' + i).style.borderColor = 'var(--error)'; }
+  }
+  for (let i = 11; i <= 15; i++) {
+    const v = document.getElementById('ex6_' + i).value;
+    if (ex6Land.includes(v)) { document.getElementById('ex6_' + i).style.borderColor = 'var(--success)'; correct++; }
+    else { document.getElementById('ex6_' + i).style.borderColor = 'var(--error)'; }
+  }
+  const fb = document.getElementById('ex6Feedback');
+  fb.className = 'feedback show ' + (correct === 15 ? 'correct' : 'incorrect');
+  fb.textContent = `You got ${correct} out of 15 correct!`;
+}
+
+function resetExercise6() {
+  for (let i = 1; i <= 15; i++) { document.getElementById('ex6_' + i).value = ''; document.getElementById('ex6_' + i).style.borderColor = '#ccc'; }
+  document.getElementById('ex6Feedback').className = 'feedback';
+  document.getElementById('ex6_ans').classList.remove('show');
+}
+
+// Exercise 7
+const ex7Answers = { ex7a: 'maternity leave', ex7b: 'unfair dismissal', ex7c: 'sick pay', ex7d: 'discriminate', ex7e: 'redundancy' };
+
+function checkExercise7() {
+  let correct = 0, total = Object.keys(ex7Answers).length;
+  for (let id in ex7Answers) {
+    const sel = document.getElementById(id);
+    if (sel.value === ex7Answers[id]) { sel.style.borderColor = 'var(--success)'; correct++; }
+    else { sel.style.borderColor = 'var(--error)'; }
+  }
+  const pct = Math.round(correct / total * 100);
+  document.getElementById('ex7Score').style.width = pct + '%';
+  document.getElementById('ex7Score').textContent = pct + '%';
+  const fb = document.getElementById('ex7Feedback');
+  fb.className = 'feedback show ' + (pct === 100 ? 'correct' : 'incorrect');
+  fb.textContent = `You got ${correct} out of ${total} correct! (${pct}%)`;
+}
+
+function resetExercise7() {
+  for (let id in ex7Answers) { document.getElementById(id).value = ''; document.getElementById(id).style.borderColor = '#ccc'; }
+  document.getElementById('ex7Feedback').className = 'feedback';
+  document.getElementById('ex7Score').style.width = '0%';
+  document.getElementById('ex7Score').textContent = '0%';
+  document.querySelectorAll('[id^="ex7"][id$="_ans"]').forEach(el => el.classList.remove('show'));
+}
+
+// Exercise 8
+const ex8Answers = { ex8a: 'formation of a business', ex8b: 'capital', ex8c: 'insolvent', ex8d: 'merger', ex8e: 'partnership' };
+
+function checkExercise8() {
+  let correct = 0, total = Object.keys(ex8Answers).length;
+  for (let id in ex8Answers) {
+    const sel = document.getElementById(id);
+    if (sel.value === ex8Answers[id]) { sel.style.borderColor = 'var(--success)'; correct++; }
+    else { sel.style.borderColor = 'var(--error)'; }
+  }
+  const pct = Math.round(correct / total * 100);
+  document.getElementById('ex8Score').style.width = pct + '%';
+  document.getElementById('ex8Score').textContent = pct + '%';
+  const fb = document.getElementById('ex8Feedback');
+  fb.className = 'feedback show ' + (pct === 100 ? 'correct' : 'incorrect');
+  fb.textContent = `You got ${correct} out of ${total} correct! (${pct}%)`;
+}
+
+function resetExercise8() {
+  for (let id in ex8Answers) { document.getElementById(id).value = ''; document.getElementById(id).style.borderColor = '#ccc'; }
+  document.getElementById('ex8Feedback').className = 'feedback';
+  document.getElementById('ex8Score').style.width = '0%';
+  document.getElementById('ex8Score').textContent = '0%';
+  document.querySelectorAll('[id^="ex8"][id$="_ans"]').forEach(el => el.classList.remove('show'));
+}
+
+// Exercise 9
+const ex9Answers = { ex9a: 'tenant', ex9b: 'conveyancing', ex9c: 'lease of land and buildings', ex9d: 'landlord', ex9e: 'real estate' };
+
+function checkExercise9() {
+  let correct = 0, total = Object.keys(ex9Answers).length;
+  for (let id in ex9Answers) {
+    const sel = document.getElementById(id);
+    if (sel.value === ex9Answers[id]) { sel.style.borderColor = 'var(--success)'; correct++; }
+    else { sel.style.borderColor = 'var(--error)'; }
+  }
+  const pct = Math.round(correct / total * 100);
+  document.getElementById('ex9Score').style.width = pct + '%';
+  document.getElementById('ex9Score').textContent = pct + '%';
+  const fb = document.getElementById('ex9Feedback');
+  fb.className = 'feedback show ' + (pct === 100 ? 'correct' : 'incorrect');
+  fb.textContent = `You got ${correct} out of ${total} correct! (${pct}%)`;
+}
+
+function resetExercise9() {
+  for (let id in ex9Answers) { document.getElementById(id).value = ''; document.getElementById(id).style.borderColor = '#ccc'; }
+  document.getElementById('ex9Feedback').className = 'feedback';
+  document.getElementById('ex9Score').style.width = '0%';
+  document.getElementById('ex9Score').textContent = '0%';
+  document.querySelectorAll('[id^="ex9"][id$="_ans"]').forEach(el => el.classList.remove('show'));
+}
+
+// Show all answers helper
+function showAllAnswers(prefix) {
+  document.querySelectorAll('[id^="' + prefix + '"][id$="_ans"]').forEach(el => el.classList.add('show'));
+}
+
+// Scenario task
+function checkScenarios() {
+  const answers = {
+    s1a: { grounds: 'yes', area: 'tort' },
+    s1b: { grounds: 'yes', area: 'contract' },
+    s1c: { grounds: 'yes', area: 'employment' },
+    s1d: { grounds: 'yes', area: 'company' },
+    s1e: { grounds: 'yes', area: 'ip' },
+    s1f: { grounds: 'yes', area: 'family' },
+    s1g: { grounds: 'yes', area: 'criminal' },
+    s1h: { grounds: 'yes', area: 'equity' }
+  };
+  let correct = 0, total = 16;
+  for (let key in answers) {
+    const g = document.getElementById(key + '_grounds');
+    const a = document.getElementById(key + '_area');
+    if (g.value === answers[key].grounds) { g.style.borderColor = 'var(--success)'; correct++; } else { g.style.borderColor = 'var(--error)'; }
+    if (a.value === answers[key].area) { a.style.borderColor = 'var(--success)'; correct++; } else { a.style.borderColor = 'var(--error)'; }
+  }
+  const fb = document.getElementById('scenarioFeedback');
+  fb.className = 'feedback show ' + (correct === total ? 'correct' : 'incorrect');
+  fb.textContent = `You got ${correct} out of ${total} correct! Click "Show Answers" to see explanations.`;
+  document.querySelectorAll('.scenario .answer-reveal').forEach(el => el.classList.add('show'));
+}
+
+function resetScenarios() {
+  document.querySelectorAll('.scenario select').forEach(s => { s.value = ''; s.style.borderColor = '#ccc'; });
+  document.getElementById('scenarioFeedback').className = 'feedback';
+  document.querySelectorAll('.scenario .answer-reveal').forEach(el => el.classList.remove('show'));
+}
+
+// Document task
+function checkDocuments() {
+  const answers = {
+    doc1: 'valid', doc1_reason: 'signed',
+    doc2: 'invalid', doc2_reason: 'hearsay',
+    doc3: 'invalid', doc3_reason: 'unsigned',
+    doc4: 'valid', doc4_reason: 'official',
+    doc5: 'valid', doc5_reason: 'direct',
+    doc6: 'invalid', doc6_reason: 'privileged',
+    doc7: 'valid', doc7_reason: 'official',
+    doc8: 'invalid', doc8_reason: 'noevidence'
+  };
+  let correct = 0, total = 16;
+  for (let key in answers) {
+    const el = document.getElementById(key);
+    if (el.value === answers[key]) { el.style.borderColor = 'var(--success)'; correct++; }
+    else { el.style.borderColor = 'var(--error)'; }
+  }
+  const fb = document.getElementById('docFeedback');
+  fb.className = 'feedback show ' + (correct === total ? 'correct' : 'incorrect');
+  fb.textContent = `You got ${correct} out of ${total} correct!`;
+  document.querySelectorAll('.document-card .answer-reveal').forEach(el => el.classList.add('show'));
+}
+
+function resetDocuments() {
+  document.querySelectorAll('.document-card select').forEach(s => { s.value = ''; s.style.borderColor = '#ccc'; });
+  document.getElementById('docFeedback').className = 'feedback';
+  document.querySelectorAll('.document-card .answer-reveal').forEach(el => el.classList.remove('show'));
+}
+
+function showAllDocAnswers() {
+  document.querySelectorAll('.document-card .answer-reveal').forEach(el => el.classList.add('show'));
+}
+</script>
+</body>
+</html>
